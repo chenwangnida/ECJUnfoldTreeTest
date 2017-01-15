@@ -24,6 +24,8 @@ public class WSCData extends GPData {
 	public List<ServicePostcondition> postconditions;
 	public Set<ServiceEdge> semanticEdges; 
 	
+	public Set<ServiceEdge> aggregatedServiceEdges;
+	
 	
 	public void copyTo(final GPData gpd) {
 		WSCData wscd = (WSCData) gpd;
@@ -35,5 +37,7 @@ public class WSCData extends GPData {
 		wscd.preconditions = preconditions;
 		wscd.postconditions = postconditions;
 		wscd.semanticEdges = semanticEdges;
+		
+		wscd.aggregatedServiceEdges = aggregatedServiceEdges;
 	}
 }

@@ -32,9 +32,10 @@ public class ServiceGPNode extends GPNode implements InOutNode {
 	private List<ServicePrecondition> preconditions;
 	private List<ServicePostcondition> postconditions;
 	private Set<ServiceEdge> semanticEdges;
-	
 
-	boolean breakChildEval = false;
+	double maxTime =0.0;
+	private Set<ServiceEdge> aggregatedServiceEdge;
+	private List<Service> seenService;
 
 	public ServiceGPNode() {
 		children = new GPNode[0];
@@ -93,25 +94,85 @@ public class ServiceGPNode extends GPNode implements InOutNode {
 		this.semanticEdges = semanticEdges;
 	}
 
+
+
+	public double getMaxTime() {
+		return maxTime;
+	}
+
+	public void setMaxTime(double maxTime) {
+		this.maxTime = maxTime;
+	}
+
+	public Set<ServiceEdge> getAggregatedServiceEdge() {
+		return aggregatedServiceEdge;
+	}
+
+	public void setAggregatedServiceEdge(Set<ServiceEdge> aggregatedServiceEdge) {
+		this.aggregatedServiceEdge = aggregatedServiceEdge;
+	}
+
+	public List<Service> getSeenService() {
+		return seenService;
+	}
+
+	public void setSeenService(List<Service> seenService) {
+		this.seenService = seenService;
+	}
+
 	public void eval(final EvolutionState state, final int thread, final GPData input, final ADFStack stack,
 			final GPIndividual individual, final Problem problem) {
+
 		WSCData rd = ((WSCData) (input));
-		WSCInitializer init = (WSCInitializer) state.initializer;		
+		WSCInitializer init = (WSCInitializer) state.initializer;
 
 		if (serName.equals("endNode")) {
 			for (GPNode child : children) {
 				child.eval(state, thread, input, stack, individual, problem);
 			}
 			rd.serName = serName;
-			rd.semanticEdges = this.semanticEdges;
+			
+			rd.seenServices = new ArrayList<Service>();
+			rd.aggregatedServiceEdges = new HashSet<ServiceEdge>();
+			
+			
 			serName = rd.serName;
+			
+			seenService = rd.seenServices;
+			aggregatedServiceEdge = rd.aggregatedServiceEdges;
+			
+			
+			// update for evaluation
+			for (GPNode child : children) {
+				ServiceGPNode childGPNode = (ServiceGPNode) child;
+				//update MaxTime
+				double childMaxTime = childGPNode.getMaxTime();
+
+				if(children.length==1){
+					maxTime += childMaxTime;					
+				}else if(children.length>1){
+					if (childMaxTime > maxTime)
+						maxTime = childMaxTime;
+				}
+				
+				//update seenService
+				List<Service> childSeenService= childGPNode.getSeenService();
+				if(childSeenService!=null){
+					seenService.addAll(childSeenService);
+				}
+				//update aggregatedServiceEdge
+				Set<ServiceEdge> childSemanticEdge = childGPNode.getAggregatedServiceEdge();
+				aggregatedServiceEdge.addAll(childSemanticEdge);
+			}
 
 		} else if (serName.equals("startNode")) {
 			rd.serName = serName;
 			rd.semanticEdges = this.semanticEdges;
+			rd.aggregatedServiceEdges = this.semanticEdges;
+
 			serName = rd.serName;
 			semanticEdges = rd.semanticEdges;
-			//update overall
+			aggregatedServiceEdge = rd.aggregatedServiceEdges;
 			
 		} else {
 			for (GPNode child : children) {
@@ -138,14 +199,44 @@ public class ServiceGPNode extends GPNode implements InOutNode {
 			rd.preconditions = service.getPreconditionList();
 			rd.postconditions = service.getPostconditionList();
 			rd.semanticEdges = this.semanticEdges;
+			rd.aggregatedServiceEdges = this.semanticEdges;
 
 			// Store input and output information in this node
 			serName = rd.serName;
+			maxTime =rd.maxTime;
+			seenService = rd.seenServices;
 			inputs = rd.inputs;
 			outputs = rd.outputs;
 			preconditions = rd.preconditions;
 			postconditions = rd.postconditions;
 			semanticEdges = rd.semanticEdges;
+			aggregatedServiceEdge = rd.aggregatedServiceEdges;
+
+
+			// update overallsemanticEdge for evaluation
+			for (GPNode child : children) {
+
+				ServiceGPNode childGPNode = (ServiceGPNode) child;
+				//update MaxTime
+				double childMaxTime = childGPNode.getMaxTime();
+
+				if(children.length==1){
+					maxTime += childMaxTime;					
+				}else if(children.length>1){
+					if (childMaxTime > maxTime)
+						maxTime = childMaxTime;
+				}
+				
+				//update seenService
+				List<Service> childSeenService= childGPNode.getSeenService();
+				if(childSeenService!=null){
+					seenService.addAll(childSeenService);
+				}
+				//update aggregatedServiceEdge
+				Set<ServiceEdge> childSemanticEdge = childGPNode.getAggregatedServiceEdge();
+				aggregatedServiceEdge.addAll(childSemanticEdge);
+			}
+
 		}
 	}
 
@@ -163,14 +254,6 @@ public class ServiceGPNode extends GPNode implements InOutNode {
 
 			String a = givenClass.getID();
 			String b = relatedClass.getID();
-			// System.out.println(giveninput+" concept of "+a+";"+existInput+"
-			// concept of" +b);
-
-			// if (WSCInitializer.semanticMatrix.get(a, b) != null) {
-			// double dasd = WSCInitializer.semanticMatrix.get(a, b) ;
-			// overallInputsRemoved.add(serInputs);
-			// return overallInputsRemoved;
-			// }
 
 			while (true) {
 				// Exact and PlugIn matching types

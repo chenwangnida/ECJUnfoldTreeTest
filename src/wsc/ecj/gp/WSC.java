@@ -39,13 +39,13 @@ public class WSC extends GPProblem implements SimpleProblemForm {
 
 			double mt = 1.0;
 			double dst = 0.0; // Exact Match dst = 1 ;
-			for (ServiceEdge semanticQuality : input.semanticEdges) {
+			for (ServiceEdge semanticQuality : input.aggregatedServiceEdges) {
 				mt *= semanticQuality.getAvgmt();
 				dst += semanticQuality.getAvgsdt();
 
 			}
 
-			dst = dst/(input.semanticEdges.size());
+			dst = dst/(input.aggregatedServiceEdges.size());
 //			System.out.println("semantic edge Size :"+ input.semanticEdges.size());
 
 			for (Service s : input.seenServices) {
