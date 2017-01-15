@@ -1,0 +1,68 @@
+parent.0                                       = koza.params
+
+seed.0                                         = 27
+composition-task                               = problem.xml
+composition-taxonomy                           = taxonomy.owl
+composition-services                           = services-output.xml
+fitness-weight1                                = 0.125
+fitness-weight2                                = 0.125
+fitness-weight3                                = 0.125
+fitness-weight4                                = 0.125
+fitness-weight5								   = 0.25
+fitness-weight6                                = 0.25
+
+# We have one function set, of class GPFunctionSet
+gp.fs.size                                     = 1
+gp.fs.0                                        = ec.gp.GPFunctionSet
+
+# We'll call the function set "f0".
+gp.fs.0.name                                   = f0
+
+# We have three functions in the function set.  They are:
+gp.fs.0.size                                   = 3
+gp.fs.0.func.0                                 = wsc.ecj.gp.ServiceGPNode
+gp.fs.0.func.0.nc                              = nc0
+gp.fs.0.func.1                                 = wsc.ecj.gp.SequenceGPNode
+gp.fs.0.func.1.nc                              = nc2
+gp.fs.0.func.2                                 = wsc.ecj.gp.ParallelGPNode
+gp.fs.0.func.2.nc                              = nc2
+
+eval.problem                                   = wsc.ecj.gp.WSC
+init                                           = wsc.ecj.gp.WSCInitializer
+eval.problem.data                              = wsc.ecj.gp.WSCData
+stat                                           = wsc.ecj.gp.GraphStatistics
+stat.file		                               = $out.stat
+stat.do-time                                   = true
+stat.do-final                                  = true
+
+generations                                    = 400
+
+pop.subpops		                               = 1
+pop.subpop.0.size 	                           = 51
+pop.subpop.0.duplicate-retries 	               = 0
+pop.subpop.0.species                           = wsc.ecj.gp.WSCSpecies
+pop.subpop.0.species.ind                       = wsc.ecj.gp.WSCIndividual
+pop.subpop.0.species.fitness                   = ec.simple.SimpleFitness
+
+# Use simple fitness, and do not quit run early
+pop.subpop.0.species.fitness.maximize          = true
+quit-on-run-complete                           = false
+checkpoint		                               = false
+
+pop.subpop.0.species.pipe                      = ec.breed.MultiBreedingPipeline
+pop.subpop.0.species.pipe.num-sources          = 3
+pop.subpop.0.species.pipe.source.0             = wsc.ecj.gp.WSCCrossoverPipeline
+pop.subpop.0.species.pipe.source.0.prob        = 0.9
+pop.subpop.0.species.pipe.source.0.num-sources = 2
+pop.subpop.0.species.pipe.source.1             = wsc.ecj.gp.WSCMutationPipeline
+pop.subpop.0.species.pipe.source.1.prob        = 0.1
+pop.subpop.0.species.pipe.source.1.num-sources = 1
+pop.subpop.0.species.pipe.source.2             = ec.breed.ReproductionPipeline
+pop.subpop.0.species.pipe.source.2.prob        = 0.0
+pop.subpop.0.species.pipe.source.2.num-sources = 1
+pop.subpop.0.species.pipe.source.0.source.0	   = ec.select.TournamentSelection
+pop.subpop.0.species.pipe.source.0.source.1	   = ec.select.TournamentSelection
+pop.subpop.0.species.pipe.source.1.source.0	   = ec.select.TournamentSelection
+pop.subpop.0.species.pipe.source.2.source.0	   = ec.select.TournamentSelection
+breed.elite.0                                  = 0
+select.tournament.size                         = 2
