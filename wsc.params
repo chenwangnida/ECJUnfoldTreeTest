@@ -19,13 +19,13 @@ gp.fs.0                                        = ec.gp.GPFunctionSet
 gp.fs.0.name                                   = f0
 
 # We have three functions in the function set.  They are:
-gp.fs.0.size                                   = 3
+gp.fs.0.size                                   = 2
 gp.fs.0.func.0                                 = wsc.ecj.gp.ServiceGPNode
 gp.fs.0.func.0.nc                              = nc0
 gp.fs.0.func.1                                 = wsc.ecj.gp.SequenceGPNode
 gp.fs.0.func.1.nc                              = nc2
 gp.fs.0.func.2                                 = wsc.ecj.gp.ParallelGPNode
-gp.fs.0.func.2.nc                              = nc2
+gp.fs.0.func.2.nc                              = nc3
 
 eval.problem                                   = wsc.ecj.gp.WSC
 init                                           = wsc.ecj.gp.WSCInitializer

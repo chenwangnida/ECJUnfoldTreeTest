@@ -33,11 +33,6 @@ public class ServiceGPNode extends GPNode implements InOutNode {
 	private List<ServicePostcondition> postconditions;
 	private Set<ServiceEdge> semanticEdges;
 	
-	
-	List<Service> seenServices = new ArrayList<Service>();
-	List<ServiceInput> overallInputs = new ArrayList<ServiceInput>();
-	List<ServiceOutput> overallOutputs = new ArrayList<ServiceOutput>();
-	Set<ServiceEdge> overallServiceEdges = new HashSet<ServiceEdge>();
 
 	boolean breakChildEval = false;
 
@@ -101,9 +96,7 @@ public class ServiceGPNode extends GPNode implements InOutNode {
 	public void eval(final EvolutionState state, final int thread, final GPData input, final ADFStack stack,
 			final GPIndividual individual, final Problem problem) {
 		WSCData rd = ((WSCData) (input));
-		WSCInitializer init = (WSCInitializer) state.initializer;
-		
-
+		WSCInitializer init = (WSCInitializer) state.initializer;		
 
 		if (serName.equals("endNode")) {
 			for (GPNode child : children) {
@@ -119,7 +112,6 @@ public class ServiceGPNode extends GPNode implements InOutNode {
 			serName = rd.serName;
 			semanticEdges = rd.semanticEdges;
 			//update overall
-			overallServiceEdges.addAll(semanticEdges);
 			
 		} else {
 			for (GPNode child : children) {
@@ -154,9 +146,6 @@ public class ServiceGPNode extends GPNode implements InOutNode {
 			preconditions = rd.preconditions;
 			postconditions = rd.postconditions;
 			semanticEdges = rd.semanticEdges;
-			//update overall
-			seenServices.addAll(seenServices);
-			overallServiceEdges.addAll(semanticEdges);
 		}
 	}
 
