@@ -290,7 +290,7 @@ public class SequenceGPNode extends GPNode implements InOutNode {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append(String.format("%d [label=\"Sequence\"]; ", hashCode()));
+		builder.append(String.format("%d [label=\"service\"]; ", hashCode()));
 		if (children != null) {
 			for (int i = 0; i < children.length; i++) {
 				GPNode child = children[i];

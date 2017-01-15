@@ -1,6 +1,7 @@
 package wsc.ecj.gp;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -146,20 +147,46 @@ public class WSCSpecies extends Species {
 	}
 
 	private GPNode MergePathTree(GPNode mergedTree, GPNode pathTree) {
-		GPNode root = null;
+//		GPNode[] pathTree = pathTree.clone();
+
+		
 		GPNode[] children = pathTree.children;
 		GPNode child = children[0];
+		String childserName = ((ServiceGPNode) child).getSerName();
 		// check if the child contained in the merged tree, if yes, connect
 		// child of children the contained node, otherwise, connect the child to
 		// the endNode
+		boolean isfound = false;
 		List<GPNode> allNodes = getAllTreeNodes(mergedTree);
-		
-		
-		
-		
 
-		return null;
+		for (GPNode node : allNodes) {
+			String serName = ((ServiceGPNode) node).getSerName();
+			if (serName.equals(childserName)) {
+				isfound = true;
+				GPNode[] childOfChild = child.children;
+				childOfChild[0].parent = node;
+				break;
+			}
+		}
+
+		
+		child.parent = mergedTree;
+
+		int length = mergedTree.children.length;
+		GPNode[] childrenGPNode = new GPNode[length + 1];
+
+		GPNode[] mergedTreeChildren = mergedTree.children;
+		for (int i = 0; i < length; i++) {
+			childrenGPNode[i] = mergedTreeChildren[i];
+		}
+		
+		System.out.println("children size:"+childrenGPNode.length);
+		childrenGPNode[length]= child;
+		mergedTree.children = childrenGPNode;
+		
+		return mergedTree;
 	}
+
 	public List<GPNode> getAllTreeNodes(GPNode gpNode) {
 		List<GPNode> allNodes = new ArrayList<GPNode>();
 		// AddChildNodes(trees[0].child, allNodes);
@@ -179,6 +206,7 @@ public class WSCSpecies extends Species {
 		return allNodes;
 
 	}
+
 	private GPNode Path2Tree(GraphPath<String, ServiceEdge> sortedPath, ServiceGraph graph) {
 		GPNode root = null;
 		// GPNode child =null;
@@ -188,7 +216,7 @@ public class WSCSpecies extends Species {
 		List<ServiceEdge> edgeList = sortedPath.getEdgeList();
 		List<String> verticeList = sortedPath.getVertexList();
 
-		for (int i = 0; i < edgeList.size(); i++) {
+		for (int i = 0; i < verticeList.size(); i++) {
 
 			if (verticeList.get(i).equals("startNode")) {
 				Set<ServiceEdge> outgoingEdgeSet = new HashSet<ServiceEdge>();
@@ -196,26 +224,29 @@ public class WSCSpecies extends Species {
 				ServiceGPNode sgp = new ServiceGPNode(outgoingEdgeSet);
 				sgp.setSerName("startNode");
 				root = sgp;
-			}
-			if (verticeList.get(i).equals("endNode")) {
+			} else if (verticeList.get(i).equals("endNode")) {
 				ServiceGPNode endNode = new ServiceGPNode();
 				endNode.setSerName("endNode");
+				root = createParentNode(root, endNode);
+
 			} else {
 				Set<ServiceEdge> outgoingEdgeSet = new HashSet<ServiceEdge>();
 				outgoingEdgeSet.add(edgeList.get(i));
 				ServiceGPNode sgp = new ServiceGPNode(outgoingEdgeSet);
 				sgp.setSerName(verticeList.get(i));
-				root = createSequenceNode(root, sgp);
+				root = createParentNode(root, sgp);
 			}
 		}
 		return root;
 	}
 
-	private GPNode createParentNode(GPNode child, GPNode sgp) {
+	private GPNode createParentNode(GPNode child, GPNode parent) {
+		child.parent = parent;
 		GPNode[] children = new GPNode[1];
 		children[0] = child;
-		children[0].parent = sgp;
-		return sgp;
+		parent.children = children;
+
+		return parent;
 	}
 
 	/**

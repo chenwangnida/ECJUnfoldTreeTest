@@ -152,6 +152,24 @@ public class ServiceGPNode extends GPNode implements InOutNode {
 	// return service.name;
 	// }
 
+//	@Override
+//	public String toString() {
+//		String serviceName;
+//		if (serName == null)
+//			serviceName = "null";
+//		else
+//			serviceName = serName;
+//		return String.format("%d [label=\"%s\"]; ", hashCode(), serviceName);
+//	}
+//	 public String toString() {
+//	 String serviceName;
+//	 if (service == null)
+//	 serviceName = "null";
+//	 else
+//	 serviceName = service.name;
+//	 return String.format("%d [label=\"%s\"]; ", hashCode(), serviceName);
+//	 }
+//	
 	@Override
 	public String toString() {
 		String serviceName;
@@ -159,16 +177,41 @@ public class ServiceGPNode extends GPNode implements InOutNode {
 			serviceName = "null";
 		else
 			serviceName = serName;
-		return String.format("%d [label=\"%s\"]; ", hashCode(), serviceName);
+		StringBuilder builder = new StringBuilder();
+		builder.append(String.format("%d [label=\"%s\"]; ", hashCode(), serviceName));
+		
+		if (children != null) {
+			for (int i = 0; i < children.length; i++) {
+				GPNode child = children[i];
+				if (child != null) {
+					builder.append(String.format("%d -> %d [dir=back]; ", hashCode(), children[i].hashCode()));
+					builder.append(children[i].toString());
+				}
+			}
+		}
+		
+		return builder.toString();
 	}
-	// public String toString() {
-	// String serviceName;
-	// if (service == null)
-	// serviceName = "null";
-	// else
-	// serviceName = service.name;
-	// return String.format("%d [label=\"%s\"]; ", hashCode(), serviceName);
-	// }
+	
+//	@Override
+//	public String toString() {
+//
+//		StringBuilder builder = new StringBuilder();
+//		builder.append(String.format("%d [label=\"service\"]; ", hashCode()));
+////		builder.append(String.format("%d -> %d [dir=back]; ", hashCode(), children[i].hashCode()));
+//		if (children != null) {
+//			for (int i = 0; i < children.length; i++) {
+//				GPNode child = children[i];
+//				if (child != null) {
+//					builder.append(String.format("%d -> %d [dir=back]; ", hashCode(), children[i].hashCode()));
+//					builder.append(children[i].toString());
+//				}
+//			}
+//		}
+//		return builder.toString();
+//	}
+//	
+	
 
 	@Override
 	public int expectedChildren() {
