@@ -1,8 +1,6 @@
 package wsc.ecj.gp;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -19,9 +17,8 @@ import wsc.graph.ServiceInput;
 import wsc.graph.ServiceOutput;
 import wsc.graph.ServicePostcondition;
 import wsc.graph.ServicePrecondition;
-import wsc.owl.bean.OWLClass;
 
-public class ServiceGPNode extends GPNode implements InOutNode {
+public class ServiceGPNode1 extends GPNode implements InOutNode {
 
 	private static final long serialVersionUID = 1L;
 	private Service service;
@@ -32,22 +29,15 @@ public class ServiceGPNode extends GPNode implements InOutNode {
 	private List<ServicePrecondition> preconditions;
 	private List<ServicePostcondition> postconditions;
 	private Set<ServiceEdge> semanticEdges;
-	
-	
-	List<Service> seenServices = new ArrayList<Service>();
-	List<ServiceInput> overallInputs = new ArrayList<ServiceInput>();
-	List<ServiceOutput> overallOutputs = new ArrayList<ServiceOutput>();
-	Set<ServiceEdge> overallServiceEdges = new HashSet<ServiceEdge>();
 
-	boolean breakChildEval = false;
-
-	public ServiceGPNode() {
+	public ServiceGPNode1() {
 		children = new GPNode[0];
 	}
 
-	public ServiceGPNode(Set<ServiceEdge> semanticEdges) {
+	public ServiceGPNode1(Set<ServiceEdge> semanticEdges) {
 		children = new GPNode[0];
 		this.setSemanticEdges(semanticEdges);
+		;
 	}
 
 	public String getSerName() {
@@ -100,31 +90,20 @@ public class ServiceGPNode extends GPNode implements InOutNode {
 
 	public void eval(final EvolutionState state, final int thread, final GPData input, final ADFStack stack,
 			final GPIndividual individual, final Problem problem) {
+
 		WSCData rd = ((WSCData) (input));
 		WSCInitializer init = (WSCInitializer) state.initializer;
-		
-
-
-		if (serName.equals("endNode")) {
-			for (GPNode child : children) {
-				child.eval(state, thread, input, stack, individual, problem);
-			}
+		if (serName.equals("startNode") || serName.equals("endNode")) {
+			// startNode and endNOde save only serviceName, which are not
+			// evaluated in their parentNodes
 			rd.serName = serName;
 			rd.semanticEdges = this.semanticEdges;
-			serName = rd.serName;
 
-		} else if (serName.equals("startNode")) {
-			rd.serName = serName;
-			rd.semanticEdges = this.semanticEdges;
+			// Store input and output information in this node
 			serName = rd.serName;
 			semanticEdges = rd.semanticEdges;
-			//update overall
-			overallServiceEdges.addAll(semanticEdges);
-			
+
 		} else {
-			for (GPNode child : children) {
-				child.eval(state, thread, input, stack, individual, problem);
-			}
 			Service service = init.serviceMap.get(serName);
 			this.setService(service);
 			rd.serName = serName;
@@ -154,49 +133,8 @@ public class ServiceGPNode extends GPNode implements InOutNode {
 			preconditions = rd.preconditions;
 			postconditions = rd.postconditions;
 			semanticEdges = rd.semanticEdges;
-			//update overall
-			seenServices.addAll(seenServices);
-			overallServiceEdges.addAll(semanticEdges);
 		}
-	}
 
-	// check there is inputs produced by the services Outputs or not
-	private List isContainedOfromI(ServiceOutput serOutput, List<ServiceInput> overallInputs, WSCInitializer init,
-			List<ServiceInput> overallInputsRemoved) {
-		for (ServiceInput serInputs : overallInputs) {
-
-			OWLClass givenClass = init.initialWSCPool.getSemanticsPool().getOwlClassHashMap()
-					.get(init.initialWSCPool.getSemanticsPool().getOwlInstHashMap().get(serOutput.getOutput())
-							.getRdfType().getResource().substring(1));
-			OWLClass relatedClass = init.initialWSCPool.getSemanticsPool().getOwlClassHashMap()
-					.get(init.initialWSCPool.getSemanticsPool().getOwlInstHashMap().get(serInputs.getInput())
-							.getRdfType().getResource().substring(1));
-
-			String a = givenClass.getID();
-			String b = relatedClass.getID();
-			// System.out.println(giveninput+" concept of "+a+";"+existInput+"
-			// concept of" +b);
-
-			// if (WSCInitializer.semanticMatrix.get(a, b) != null) {
-			// double dasd = WSCInitializer.semanticMatrix.get(a, b) ;
-			// overallInputsRemoved.add(serInputs);
-			// return overallInputsRemoved;
-			// }
-
-			while (true) {
-				// Exact and PlugIn matching types
-				if (givenClass.getID().equals(relatedClass.getID())) {
-					overallInputsRemoved.add(serInputs);
-					// return overallInputsRemoved;
-				}
-				if (givenClass.getSubClassOf() == null || givenClass.getSubClassOf().getResource().equals("")) {
-					break;
-				}
-				givenClass = init.initialWSCPool.getSemanticsPool().getOwlClassHashMap()
-						.get(givenClass.getSubClassOf().getResource().substring(1));
-			}
-		}
-		return overallInputsRemoved;
 	}
 
 	public void setService(Service s) {
@@ -206,6 +144,13 @@ public class ServiceGPNode extends GPNode implements InOutNode {
 	public Service getService() {
 		return service;
 	}
+	// @Override
+	// public String toString() {
+	// if (service == null)
+	// return "null";
+	// else
+	// return service.name;
+	// }
 
 	@Override
 	public String toString() {
@@ -214,21 +159,16 @@ public class ServiceGPNode extends GPNode implements InOutNode {
 			serviceName = "null";
 		else
 			serviceName = serName;
-		StringBuilder builder = new StringBuilder();
-		builder.append(String.format("%d [label=\"%s\"]; ", hashCode(), serviceName));
-
-		if (children != null) {
-			for (int i = 0; i < children.length; i++) {
-				GPNode child = children[i];
-				if (child != null) {
-					builder.append(String.format("%d -> %d [dir=back]; ", hashCode(), children[i].hashCode()));
-					builder.append(children[i].toString());
-				}
-			}
-		}
-
-		return builder.toString();
+		return String.format("%d [label=\"%s\"]; ", hashCode(), serviceName);
 	}
+	// public String toString() {
+	// String serviceName;
+	// if (service == null)
+	// serviceName = "null";
+	// else
+	// serviceName = service.name;
+	// return String.format("%d [label=\"%s\"]; ", hashCode(), serviceName);
+	// }
 
 	@Override
 	public int expectedChildren() {

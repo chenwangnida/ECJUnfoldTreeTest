@@ -94,12 +94,12 @@ public class SequenceGPNode extends GPNode implements InOutNode {
 
 			// System.out.println(""+rd.serviceId);
 
-			if (rd.serviceId.equals("startNode")) {
+			if (rd.serName.equals("startNode")) {
 				overallServiceEdges.addAll(rd.semanticEdges);
 				continue;
 			}
 
-			if (rd.serviceId.equals("endNode")) {
+			if (rd.serName.equals("endNode")) {
 				continue;
 			}
 
@@ -181,7 +181,7 @@ public class SequenceGPNode extends GPNode implements InOutNode {
 		rd.preconditions = overallPreconditions;
 		rd.postconditions = overallPostconditions;
 		rd.semanticEdges = overallServiceEdges;
-		rd.serviceId = "Sequence";
+		rd.serName = "Sequence";
 
 		// Store input and output information in this node
 		inputs = rd.inputs;

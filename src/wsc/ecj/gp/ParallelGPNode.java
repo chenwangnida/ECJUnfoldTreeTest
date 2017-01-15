@@ -112,7 +112,7 @@ public class ParallelGPNode extends GPNode implements InOutNode {
 		rd.outputs = overallOutputs;
 		rd.preconditions = overallPreconditions;
 		rd.postconditions = overallPostconditions;
-		rd.serviceId = "Parallel";
+		rd.serName = "Parallel";
 		rd.semanticEdges = overallServiceEdges;
 
 		// Store input and output information in this node

@@ -147,9 +147,8 @@ public class WSCSpecies extends Species {
 	}
 
 	private GPNode MergePathTree(GPNode mergedTree, GPNode pathTree) {
-//		GPNode[] pathTree = pathTree.clone();
+		// GPNode[] pathTree = pathTree.clone();
 
-		
 		GPNode[] children = pathTree.children;
 		GPNode child = children[0];
 		String childserName = ((ServiceGPNode) child).getSerName();
@@ -160,7 +159,14 @@ public class WSCSpecies extends Species {
 		List<GPNode> allNodes = getAllTreeNodes(mergedTree);
 
 		for (GPNode node : allNodes) {
-			String serName = ((ServiceGPNode) node).getSerName();
+			String serName;
+//			if (node instanceof ServiceGPNode) {
+				serName = ((ServiceGPNode) node).getSerName();
+//			} else {
+//				serName = ((StartGPNode) node).getSerName();
+//
+//			}
+
 			if (serName.equals(childserName)) {
 				isfound = true;
 				GPNode[] childOfChild = child.children;
@@ -169,7 +175,6 @@ public class WSCSpecies extends Species {
 			}
 		}
 
-		
 		child.parent = mergedTree;
 
 		int length = mergedTree.children.length;
@@ -179,11 +184,11 @@ public class WSCSpecies extends Species {
 		for (int i = 0; i < length; i++) {
 			childrenGPNode[i] = mergedTreeChildren[i];
 		}
-		
-		System.out.println("children size:"+childrenGPNode.length);
-		childrenGPNode[length]= child;
+
+		System.out.println("children size:" + childrenGPNode.length);
+		childrenGPNode[length] = child;
 		mergedTree.children = childrenGPNode;
-		
+
 		return mergedTree;
 	}
 

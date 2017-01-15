@@ -17,16 +17,17 @@ public class WSCData extends GPData {
 	public double maxTime;
 	List<Service> seenServices;
 	
-	public String serviceId;
+	public String serName;
 	public List<ServiceInput> inputs;
 	public List<ServiceOutput> outputs;
 	public List<ServicePrecondition> preconditions;
 	public List<ServicePostcondition> postconditions;
 	public Set<ServiceEdge> semanticEdges; 
 	
+	
 	public void copyTo(final GPData gpd) {
 		WSCData wscd = (WSCData) gpd;
-		wscd.serviceId = serviceId;
+		wscd.serName = serName;
 		wscd.maxTime = maxTime;
 		wscd.seenServices = seenServices;
 		wscd.inputs = inputs;
