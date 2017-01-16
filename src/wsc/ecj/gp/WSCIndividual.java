@@ -2,20 +2,18 @@ package wsc.ecj.gp;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Queue;
-import java.util.Set;
+
+import com.google.common.collect.Iterables;
+import static java.util.Arrays.asList;
 
 import ec.gp.GPIndividual;
 import ec.gp.GPNode;
 import ec.gp.GPTree;
 import ec.simple.SimpleFitness;
 import ec.util.Parameter;
-import wsc.graph.ServiceEdge;
 import wsc.graph.ServiceGraph;
-import wsc.graph.ServiceOutput;
 
 public class WSCIndividual extends GPIndividual {
 
@@ -229,47 +227,59 @@ public class WSCIndividual extends GPIndividual {
 
 				// replace replacement in the graph
 				GPNode[] childOfReplacement = replacement.children;
+				//point all children's parent to parent
+
 				for (GPNode childofRep : childOfReplacement) {
 					childofRep.parent = pNode;
 				}
-				// pNode.children = childOfReplacement;
+				
+				//point all parent's children to children
+				Iterator<GPNode> childOfNodeIter = Iterables
+						.concat(Arrays.asList(pNode.children), Arrays.asList(childOfReplacement)).iterator();
 
+				List<GPNode> copy = new ArrayList<GPNode>();
+
+				while (childOfNodeIter.hasNext()) {
+					GPNode childOfNode =childOfNodeIter.next();
+					if (childOfNode != node) {
+						copy.add(childOfNode);
+					} 
+				}
+
+				GPNode[] allChildOfNode = new GPNode[pNode.children.length + childOfReplacement.length - 1];
+				for (int i = 0; i < copy.size(); i++) {
+					allChildOfNode[i] = copy.get(i);
+				}
+
+				 pNode.children =allChildOfNode;
 			} else {
 				GPNode pNode = (GPNode) node.parent;
 				GPNode[] childOfReplacement = replacement.children;
+				
+				//point all children's parent to parent
 				for (GPNode childofRep : childOfReplacement) {
 					childofRep.parent = pNode;
 				}
 
-				// if ChildOfReplacement is only one node
-				if (childOfReplacement.length == 1)
-					for (int i = 0; i < pNode.children.length; i++) {
-						if (pNode.children[i] == node) {
-							pNode.children[i] = childOfReplacement[0];
-						}
-					}
-				//
-				if (childOfReplacement.length > 1) {
-					GPNode[] childOfNode = new GPNode[pNode.children.length + childOfReplacement.length - 1];
+				//point all parent's children to children
+				Iterator<GPNode> childOfNodeIter = Iterables
+						.concat(Arrays.asList(pNode.children), Arrays.asList(childOfReplacement)).iterator();
 
-					for (int i = 0; i < pNode.children.length; i++) {
-						if (pNode.children[i] == node) {
-							pNode.children[i] = childOfReplacement[0];
-						}
-					}					
+				List<GPNode> copy = new ArrayList<GPNode>();
 
-					for (int i = 0; i < pNode.children.length; i++) {
-						childOfNode[i] = pNode.children[i];
-					}
-
-					for (int i = 1; i < childOfReplacement.length; i++) {					
-//						childOfReplacement[i];
-					}
-					
-					
-					pNode.children =childOfNode;
-
+				while (childOfNodeIter.hasNext()) {
+					GPNode childOfNode =childOfNodeIter.next();
+					if (childOfNode != node) {
+						copy.add(childOfNode);
+					} 
 				}
+
+				GPNode[] allChildOfNode = new GPNode[pNode.children.length + childOfReplacement.length - 1];
+				for (int i = 0; i < copy.size(); i++) {
+					allChildOfNode[i] = copy.get(i);
+				}
+
+				 pNode.children =allChildOfNode;
 
 			}
 
