@@ -92,14 +92,10 @@ public class WSCIndividual extends GPIndividual {
 			if (filteredChild instanceof ServiceGPNode) {
 				ServiceGPNode sgp = (ServiceGPNode) filteredChild;
 				if (sgp.getSerName().equals("startNode")) {
-					// initial variable rootNode
-					removedNodeList.add((GPNode) sgp.parent);
 					// remove startNode
 					removedNodeList.add(allNodes.get(i));
 				}
 				if (sgp.getSerName().equals("endNode")) {
-					// initial variable endParentNodeList
-					removedNodeList.add((GPNode) sgp.parent);
 					// remove endNode
 					removedNodeList.add(allNodes.get(i));
 				}
@@ -164,9 +160,9 @@ public class WSCIndividual extends GPIndividual {
 			// replacement = (GPNode) replacement.clone();
 
 			// SourceNode of selected Node obtained
-			GPNode sourceOfNode = getSourceGPNode(node);
+//			GPNode sourceOfNode = getSourceGPNode(node);
 			// SourceNode of replaced Node obtained
-			GPNode sourceOfReplacement = getSourceGPNode(replacement);
+//			GPNode sourceOfReplacement = getSourceGPNode(replacement);
 
 			 replacement = (GPNode) replacement.clone();
 
@@ -174,8 +170,8 @@ public class WSCIndividual extends GPIndividual {
 			// update the ServiceEdge of sourceOfNode with that of
 			// sourceOfReplacement
 
-			Set<ServiceEdge> EdgeOfsourceOfReplacement = ((ServiceGPNode) sourceOfReplacement).getSemanticEdges();
-			((ServiceGPNode) sourceOfNode).setSemanticEdges(EdgeOfsourceOfReplacement);
+//			Set<ServiceEdge> EdgeOfsourceOfReplacement = ((ServiceGPNode) sourceOfReplacement).getSemanticEdges();
+//			((ServiceGPNode) sourceOfNode).setSemanticEdges(EdgeOfsourceOfReplacement);
 
 			// GPNode parentNode = (GPNode) node.parent;
 			// if (parentNode == null) {
@@ -201,40 +197,7 @@ public class WSCIndividual extends GPIndividual {
 		}
 	}
 
-	// private GPNode getSourceGPNode(GPNode node) {
-	//
-	// GPNode sourceGPNode = null;
-	// GPNode parentNode = (GPNode) node.parent;
-	// GPNode pOperatorNode = (GPNode) parentNode.parent;
-	//
-	// System.out.println("selected node for finding source node"+node);
-	//
-	// GPNode[] pOperatorNodeChild = pOperatorNode.children;
-	//
-	// for (GPNode ppOpChild : pOperatorNodeChild) {
-	// if (ppOpChild instanceof ServiceGPNode) {
-	// sourceGPNode = ppOpChild;
-	// }
-	// }
-	//
-	// if (sourceGPNode == null) {
-	// GPNode ppOperatorNode = (GPNode) pOperatorNode.parent;
-	// GPNode[] ppOpratorNodeChild = ppOperatorNode.children;
-	// for (GPNode ppOpChild : ppOpratorNodeChild) {
-	// if (ppOpChild instanceof ServiceGPNode) {
-	// sourceGPNode = ppOpChild;
-	// }
-	// }
-	// }
-	//
-	// if (sourceGPNode == null)
-	// {
-	// System.out.println("Wrong SourceNode of selected Node obttained under
-	// crossover");
-	// }
-	// return sourceGPNode;
-	// }
-
+	
 	private GPNode getSourceGPNode(GPNode node) {
 
 		GPNode parentNode = (GPNode) node.parent;
