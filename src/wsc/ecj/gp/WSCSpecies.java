@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.AllDirectedPaths;
+
+import com.google.common.collect.Iterables;
 
 import java.util.Set;
 
@@ -160,34 +163,53 @@ public class WSCSpecies extends Species {
 
 		for (GPNode node : allNodes) {
 			String serName;
-//			if (node instanceof ServiceGPNode) {
 				serName = ((ServiceGPNode) node).getSerName();
-//			} else {
-//				serName = ((StartGPNode) node).getSerName();
-//
-//			}
-
 			if (serName.equals(childserName)) {
 				isfound = true;
-				GPNode[] childOfChild = child.children;
-				childOfChild[0].parent = node;
+				
+				//point matched node's child parent to be the node
+				
+				GPNode[] childrenOfChild =  child.children;
+				GPNode oneChild = (GPNode)childrenOfChild[0];
+				GPNode copyOneChild =(GPNode) oneChild.clone();
+				
+				copyOneChild.parent = node;  
+				
+				Iterator<GPNode> childOfNodeIter = Iterables
+						.concat(Arrays.asList(node.children), Arrays.asList(copyOneChild)).iterator();
+				List<GPNode> copy = new ArrayList<GPNode>();
+
+				
+				while (childOfNodeIter.hasNext()) {
+					GPNode childOfNode =childOfNodeIter.next();
+					if (childOfNode != node) {
+						copy.add(childOfNode);
+					} 
+				}
+
+				GPNode[] allChildOfNode = new GPNode[node.children.length + 1];
+				for (int i = 0; i < copy.size(); i++) {
+					allChildOfNode[i] = copy.get(i);
+				}
+
+				 node.children =allChildOfNode;
 				break;
 			}
 		}
 
-		child.parent = mergedTree;
-
-		int length = mergedTree.children.length;
-		GPNode[] childrenGPNode = new GPNode[length + 1];
-
-		GPNode[] mergedTreeChildren = mergedTree.children;
-		for (int i = 0; i < length; i++) {
-			childrenGPNode[i] = mergedTreeChildren[i];
-		}
-
-		System.out.println("children size:" + childrenGPNode.length);
-		childrenGPNode[length] = child;
-		mergedTree.children = childrenGPNode;
+//		child.parent = mergedTree;
+//
+//		int length = mergedTree.children.length;
+//		GPNode[] childrenGPNode = new GPNode[length + 1];
+//
+//		GPNode[] mergedTreeChildren = mergedTree.children;
+//		for (int i = 0; i < length; i++) {
+//			childrenGPNode[i] = mergedTreeChildren[i];
+//		}
+//
+//		System.out.println("children size:" + childrenGPNode.length);
+//		childrenGPNode[length] = child;
+//		mergedTree.children = childrenGPNode;
 
 		return mergedTree;
 	}
