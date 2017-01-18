@@ -175,9 +175,10 @@ public class WSCIndividual extends GPIndividual {
 		// Perform replacement if neither node is not null
 		if (node != null && replacement != null) {
 			// clone replacement
-			replacement = (GPNode) replacement.clone();
+			replacement = (GPNode)replacement.clone();
+			
 
-			// GPNode[] replacementList = replacement.children.clone();
+//			 GPNode[] replacementList = replacement.children.clone();
 
 			boolean isParentofStartNode = false;
 			for (GPNode child : node.children) {
@@ -199,7 +200,7 @@ public class WSCIndividual extends GPIndividual {
 				List<GPNode> allNodeofReplacement = this.getAllTreeNodes(replacement);
 				for (GPNode gpn : allNodeofReplacement) {
 					if (gpn instanceof ServiceGPNode) {
-						if (((ServiceGPNode) gpn).getSerName().equals("endNode")) {
+						if (((ServiceGPNode) gpn).getSerName().equals("startNode")) {
 							endNodeList.add(gpn);
 						}
 					}

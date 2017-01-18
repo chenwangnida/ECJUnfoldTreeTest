@@ -138,6 +138,8 @@ public class WSCSpecies extends Species {
 			// transfer path to tree
 			GPNode pathTree = Path2Tree(sortedPath, graph);
 
+			// System.out.println(pathTree);
+
 			if (countNumber == 0) {
 				root = pathTree;
 			} else {
@@ -152,39 +154,39 @@ public class WSCSpecies extends Species {
 	private GPNode MergePathTree(GPNode mergedTree, GPNode pathTree) {
 		// GPNode[] pathTree = pathTree.clone();
 
-		GPNode[] children = pathTree.children;
-		GPNode child = children[0];
-		String childserName = ((ServiceGPNode) child).getSerName();
 		// check if the child contained in the merged tree, if yes, connect
 		// child of children the contained node, otherwise, connect the child to
 		// the endNode
 		boolean isfound = false;
+		GPNode[] children = pathTree.children;
+		GPNode child = children[0];
+
 		List<GPNode> allNodes = getAllTreeNodes(mergedTree);
 
 		for (GPNode node : allNodes) {
-			String serName;
-				serName = ((ServiceGPNode) node).getSerName();
-			if (serName.equals(childserName)) {
+
+			String childserName = ((ServiceGPNode) child).getSerName();
+			String serName = ((ServiceGPNode) node).getSerName();
+			if (serName.equals(childserName) && !serName.equals("startNode")) {
 				isfound = true;
-				
-				//point matched node's child parent to be the node
-				
-				GPNode[] childrenOfChild =  child.children;
-				GPNode oneChild = (GPNode)childrenOfChild[0];
-				GPNode copyOneChild =(GPNode) oneChild.clone();
-				
-				copyOneChild.parent = node;  
-				
+
+				// point matched node's child parent to be the node
+
+				GPNode[] childrenOfChild = child.children;
+				GPNode oneChild = (GPNode) childrenOfChild[0];
+				GPNode copyOneChild = (GPNode) oneChild.clone();
+
+				copyOneChild.parent = node;
+
 				Iterator<GPNode> childOfNodeIter = Iterables
 						.concat(Arrays.asList(node.children), Arrays.asList(copyOneChild)).iterator();
 				List<GPNode> copy = new ArrayList<GPNode>();
 
-				
 				while (childOfNodeIter.hasNext()) {
-					GPNode childOfNode =childOfNodeIter.next();
-					if (childOfNode != node) {
-						copy.add(childOfNode);
-					} 
+					GPNode childOfNode = childOfNodeIter.next();
+					// if (childOfNode != node) {
+					copy.add(childOfNode);
+					// }
 				}
 
 				GPNode[] allChildOfNode = new GPNode[node.children.length + 1];
@@ -192,25 +194,28 @@ public class WSCSpecies extends Species {
 					allChildOfNode[i] = copy.get(i);
 				}
 
-				 node.children =allChildOfNode;
+				node.children = allChildOfNode;
 				break;
 			}
 		}
 
-//		child.parent = mergedTree;
-//
-//		int length = mergedTree.children.length;
-//		GPNode[] childrenGPNode = new GPNode[length + 1];
-//
-//		GPNode[] mergedTreeChildren = mergedTree.children;
-//		for (int i = 0; i < length; i++) {
-//			childrenGPNode[i] = mergedTreeChildren[i];
-//		}
-//
-//		System.out.println("children size:" + childrenGPNode.length);
-//		childrenGPNode[length] = child;
-//		mergedTree.children = childrenGPNode;
+		if (isfound == false) {
 
+			child.parent = mergedTree;
+
+			int length = mergedTree.children.length;
+			GPNode[] childrenGPNode = new GPNode[length + 1];
+
+			GPNode[] mergedTreeChildren = mergedTree.children;
+			for (int i = 0; i < length; i++) {
+				childrenGPNode[i] = mergedTreeChildren[i];
+			}
+
+			childrenGPNode[length] = child;
+
+			mergedTree.children = childrenGPNode;
+
+		}
 		return mergedTree;
 	}
 
@@ -218,6 +223,24 @@ public class WSCSpecies extends Species {
 		List<GPNode> allNodes = new ArrayList<GPNode>();
 		// AddChildNodes(trees[0].child, allNodes);
 		AddChildNodes(gpNode, allNodes);
+
+		List<GPNode> removedNodeList = new ArrayList<GPNode>();
+		for (int i = 0; i < allNodes.size(); i++) {
+			GPNode filteredChild = allNodes.get(i);
+			if (filteredChild instanceof ServiceGPNode) {
+				ServiceGPNode sgp = (ServiceGPNode) filteredChild;
+				if (sgp.getSerName().equals("endNode")) {
+					// remove endNode
+					removedNodeList.add(allNodes.get(i));
+				}
+				if (sgp.getSerName().equals("startNode")) {
+					// remove startNode
+					removedNodeList.add(allNodes.get(i));
+				}
+			}
+		}
+
+		allNodes.removeAll(removedNodeList);
 
 		return allNodes;
 	}
