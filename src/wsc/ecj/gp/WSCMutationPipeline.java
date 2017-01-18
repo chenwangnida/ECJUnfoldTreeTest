@@ -84,27 +84,27 @@ public class WSCMutationPipeline extends BreedingPipeline {
 			List<String> Inputs4Node = new ArrayList<String>(combinedInputs);
 			List<String> outputs4Node = new ArrayList<String>(combinedoutputs);
 
-			System.out.println("selected: "+selectedNode);
-			
-			for (String input :Inputs4Node) {
-				System.out.print("I:"+input+"; ");
-			}
-			System.out.println("");
-
-			for (String output :outputs4Node) {
-				System.out.print("O:"+output+"; ");
-			}
-			System.out.println("");
+//			System.out.println("selected: "+selectedNode);
+//			
+//			for (String input :Inputs4Node) {
+//				System.out.print("I:"+input+"; ");
+//			}
+//			System.out.println("");
+//
+//			for (String output :outputs4Node) {
+//				System.out.print("O:"+output+"; ");
+//			}
+//			System.out.println("");
 
 			ServiceGraph graph4Mutation = species.Graph4Mutation(init, Inputs4Node, outputs4Node);
 	
 			
-			System.out.println(" @mutation graph:"+graph4Mutation.toString());;
+//			System.out.println(" @mutation graph:"+graph4Mutation.toString());;
 
 //			GPNode tree4Mutation = species.toTree4Mutation("startNode", graph4Mutation);
 			GPNode tree4Mutation = species.unfold2Tree(graph4Mutation);
-			System.out.println("mutation graph 4tree"+tree4Mutation.toString());;
-			System.out.println("_________________________________________________________________________________________________________");
+//			System.out.println("mutation graph 4tree"+tree4Mutation.toString());;
+//			System.out.println("_________________________________________________________________________________________________________");
 
 			// Replace the old tree with the new one
 			tree.replaceNode4Mutation(selectedNode, tree4Mutation);
