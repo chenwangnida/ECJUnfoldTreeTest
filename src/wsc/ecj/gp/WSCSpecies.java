@@ -28,6 +28,7 @@ import wsc.graph.ServiceEdge;
 public class WSCSpecies extends Species {
 
 	private static final long serialVersionUID = 1L;
+	
 
 	@Override
 	public Parameter defaultBase() {
@@ -151,56 +152,84 @@ public class WSCSpecies extends Species {
 		return root;
 	}
 
+	private List<GPNode> findNode(GPNode mergedTree, List<GPNode> allPathNodes, GPNode foundNode, int k, List<GPNode> matchedGPNode, List kList) {
+
+		if (k < allPathNodes.size()) {
+			GPNode[] childrenMergedTree = mergedTree.children;
+			for (GPNode childMergedTreeNode : childrenMergedTree) {
+				String childserName = ((ServiceGPNode) childMergedTreeNode).getSerName();
+				String serName = ((ServiceGPNode) allPathNodes.get(k)).getSerName();
+				if (childserName == serName) {
+					foundNode = childMergedTreeNode;
+					matchedGPNode.add(childMergedTreeNode);
+					kList.add(k);
+					findNode(foundNode, allPathNodes, foundNode, k + 1, matchedGPNode,kList);
+
+					break;
+				}
+			}
+		}
+	
+		return matchedGPNode;
+
+	}
+
 	private GPNode MergePathTree(GPNode mergedTree, GPNode pathTree) {
 		// GPNode[] pathTree = pathTree.clone();
 
 		// check if the child contained in the merged tree, if yes, connect
 		// child of children the contained node, otherwise, connect the child to
 		// the endNode
-		boolean isfound = false;
-		GPNode[] children = pathTree.children;
-		GPNode child = children[0];
+		 GPNode foundNode = null;
+		 GPNode[] children = pathTree.children;
+		 GPNode child = children[0];
 
-		List<GPNode> allNodes = getAllTreeNodes(mergedTree);
+		List<GPNode> allPathNodes = getAllTreeNodes(pathTree);
+		int k = 0;
+		
+		List<GPNode> matchedGPNode = new ArrayList<GPNode>();
+		List kList= new ArrayList();
+		
+		List<GPNode> foundGPNodeList = findNode(mergedTree, allPathNodes, foundNode, k, matchedGPNode, kList);
+		if(foundGPNodeList.size()!=0){
+			System.out.println("matched GPNODE NO:"+foundGPNodeList.size());
+			foundNode = foundGPNodeList.get(foundGPNodeList.size()-1);
+			k = (int) kList.get(kList.size()-1);
+		}
+		
+		if (foundNode != null) {
+		
+			// point matched node's child parent to be the node
 
-		for (GPNode node : allNodes) {
+			GPNode[] childrenOfChild = allPathNodes.get(k).children;
+			GPNode oneChild = (GPNode) childrenOfChild[0];
+			GPNode copyOneChild = (GPNode) oneChild.clone();
 
-			String childserName = ((ServiceGPNode) child).getSerName();
-			String serName = ((ServiceGPNode) node).getSerName();
-			if (serName.equals(childserName) && !serName.equals("startNode")) {
-				isfound = true;
+			copyOneChild.parent = foundNode;
 
-				// point matched node's child parent to be the node
+			Iterator<GPNode> childOfNodeIter = Iterables
+					.concat(Arrays.asList(foundNode.children), Arrays.asList(copyOneChild)).iterator();
+			List<GPNode> copy = new ArrayList<GPNode>();
 
-				GPNode[] childrenOfChild = child.children;
-				GPNode oneChild = (GPNode) childrenOfChild[0];
-				GPNode copyOneChild = (GPNode) oneChild.clone();
-
-				copyOneChild.parent = node;
-
-				Iterator<GPNode> childOfNodeIter = Iterables
-						.concat(Arrays.asList(node.children), Arrays.asList(copyOneChild)).iterator();
-				List<GPNode> copy = new ArrayList<GPNode>();
-
-				while (childOfNodeIter.hasNext()) {
-					GPNode childOfNode = childOfNodeIter.next();
-					// if (childOfNode != node) {
-					copy.add(childOfNode);
-					// }
-				}
-
-				GPNode[] allChildOfNode = new GPNode[node.children.length + 1];
-				for (int i = 0; i < copy.size(); i++) {
-					allChildOfNode[i] = copy.get(i);
-				}
-
-				node.children = allChildOfNode;
-				break;
+			while (childOfNodeIter.hasNext()) {
+				GPNode childOfNode = childOfNodeIter.next();
+				// if (childOfNode != node) {
+				copy.add(childOfNode);
+				// }
 			}
+
+			GPNode[] allChildOfNode = new GPNode[foundNode.children.length + 1];
+			for (int i = 0; i < copy.size(); i++) {
+				allChildOfNode[i] = copy.get(i);
+			}
+
+			foundNode.children = allChildOfNode;
+
 		}
 
-		if (isfound == false) {
+		if (foundNode == null)
 
+		{
 			child.parent = mergedTree;
 
 			int length = mergedTree.children.length;
