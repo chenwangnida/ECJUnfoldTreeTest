@@ -28,7 +28,7 @@ import wsc.graph.ServiceEdge;
 public class WSCSpecies extends Species {
 
 	private static final long serialVersionUID = 1L;
-	
+
 
 	@Override
 	public Parameter defaultBase() {
@@ -113,7 +113,7 @@ public class WSCSpecies extends Species {
 	 * Find all the path of serviceGraph using Dijkstra-like algorithm, sort
 	 * path according to the length in descending. check the second service
 	 * node, matching nodes from first path or merged path
-	 * 
+	 *
 	 *
 	 * @return Tree root
 	 */
@@ -169,7 +169,7 @@ public class WSCSpecies extends Species {
 				}
 			}
 		}
-	
+
 		return matchedGPNode;
 
 	}
@@ -186,19 +186,19 @@ public class WSCSpecies extends Species {
 
 		List<GPNode> allPathNodes = getAllTreeNodes(pathTree);
 		int k = 0;
-		
+
 		List<GPNode> matchedGPNode = new ArrayList<GPNode>();
 		List kList= new ArrayList();
-		
+
 		List<GPNode> foundGPNodeList = findNode(mergedTree, allPathNodes, foundNode, k, matchedGPNode, kList);
 		if(foundGPNodeList.size()!=0){
-			System.out.println("matched GPNODE NO:"+foundGPNodeList.size());
+//			System.out.println("matched GPNODE NO:"+foundGPNodeList.size());
 			foundNode = foundGPNodeList.get(foundGPNodeList.size()-1);
 			k = (int) kList.get(kList.size()-1);
 		}
-		
+
 		if (foundNode != null) {
-		
+
 			// point matched node's child parent to be the node
 
 			GPNode[] childrenOfChild = allPathNodes.get(k).children;
