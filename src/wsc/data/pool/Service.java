@@ -188,6 +188,16 @@ public class Service implements Comparable<Service> {
 		double sumdst = 0.00;
 
 		int inputMatchCount = 0;
+		
+		// some web service do not have any input instance
+		if (service.getInputList().size() == 0) {
+			directedGraph.addVertex(service.getServiceID());
+			ServiceEdge serEdge = new ServiceEdge(1, 1);
+			directedGraph.addEdge("startNode", service.getServiceID(), serEdge);			
+			return true;
+		}
+
+		//some web services at least have one input instance
 
 		for (ServiceInput serinput : service.getInputList()) {
 			serinput.setSatified(false);
@@ -296,6 +306,15 @@ public class Service implements Comparable<Service> {
 		double sumdst = 0.00;
 
 		int inputMatchCount = 0;
+		// some web service do not have any input instance
+		if (service.getInputList().size() == 0) {
+			directedGraph.addVertex(service.getServiceID());
+			ServiceEdge serEdge = new ServiceEdge(1, 1);
+			directedGraph.addEdge("startNode", service.getServiceID(), serEdge);			
+			return true;
+		}
+
+		//some web services at least have one input instance
 
 		for (ServiceInput serinput : service.getInputList()) {
 			serinput.setSatified(false);
