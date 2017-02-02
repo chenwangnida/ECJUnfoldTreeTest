@@ -1,10 +1,6 @@
 package wsc.ecj.gp;
 
 import java.util.List;
-import java.util.Set;
-
-import wsc.data.pool.Service;
-import wsc.graph.ServiceEdge;
 import wsc.graph.ServiceInput;
 import wsc.graph.ServiceOutput;
 import wsc.graph.ServicePostcondition;

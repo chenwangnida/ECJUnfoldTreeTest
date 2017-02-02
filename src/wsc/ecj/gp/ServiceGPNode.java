@@ -2,7 +2,6 @@ package wsc.ecj.gp;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -54,6 +53,7 @@ public class ServiceGPNode extends GPNode implements InOutNode {
 		this.serName = serName;
 	}
 
+	@Override
 	public List<ServiceInput> getInputs() {
 		return inputs;
 	}
@@ -62,6 +62,7 @@ public class ServiceGPNode extends GPNode implements InOutNode {
 		this.inputs = inputs;
 	}
 
+	@Override
 	public List<ServiceOutput> getOutputs() {
 		return outputs;
 	}
@@ -70,6 +71,7 @@ public class ServiceGPNode extends GPNode implements InOutNode {
 		this.outputs = outputs;
 	}
 
+	@Override
 	public List<ServicePrecondition> getPreconditions() {
 		return preconditions;
 	}
@@ -78,6 +80,7 @@ public class ServiceGPNode extends GPNode implements InOutNode {
 		this.preconditions = preconditions;
 	}
 
+	@Override
 	public List<ServicePostcondition> getPostconditions() {
 		return postconditions;
 	}
@@ -120,6 +123,7 @@ public class ServiceGPNode extends GPNode implements InOutNode {
 		this.seenService = seenService;
 	}
 
+	@Override
 	public void eval(final EvolutionState state, final int thread, final GPData input, final ADFStack stack,
 			final GPIndividual individual, final Problem problem) {
 
@@ -178,7 +182,7 @@ public class ServiceGPNode extends GPNode implements InOutNode {
 			for (GPNode child : children) {
 				child.eval(state, thread, input, stack, individual, problem);
 			}
-			Service service = init.serviceMap.get(serName);
+			Service service = WSCInitializer.serviceMap.get(serName);
 			this.setService(service);
 			rd.serName = serName;
 			rd.maxTime = service.getQos()[WSCInitializer.TIME];

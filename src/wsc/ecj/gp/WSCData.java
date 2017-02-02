@@ -27,6 +27,7 @@ public class WSCData extends GPData {
 	public Set<ServiceEdge> aggregatedServiceEdges;
 	
 	
+	@Override
 	public void copyTo(final GPData gpd) {
 		WSCData wscd = (WSCData) gpd;
 		wscd.serName = serName;

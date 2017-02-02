@@ -6,8 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.collect.Iterables;
-import static java.util.Arrays.asList;
-
 import ec.gp.GPIndividual;
 import ec.gp.GPNode;
 import ec.gp.GPTree;

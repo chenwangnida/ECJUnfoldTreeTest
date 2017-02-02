@@ -202,7 +202,7 @@ public class WSCSpecies extends Species {
 			// point matched node's child parent to be the node
 
 			GPNode[] childrenOfChild = allPathNodes.get(k).children;
-			GPNode oneChild = (GPNode) childrenOfChild[0];
+			GPNode oneChild = childrenOfChild[0];
 			GPNode copyOneChild = (GPNode) oneChild.clone();
 
 			copyOneChild.parent = foundNode;
