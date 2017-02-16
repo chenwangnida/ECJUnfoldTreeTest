@@ -44,6 +44,7 @@ public class WSC extends GPProblem implements SimpleProblemForm {
 			for (ServiceEdge semanticQuality : input.aggregatedServiceEdges) {
 				mt *= semanticQuality.getAvgmt();
 				dst += semanticQuality.getAvgsdt();
+				
 
 			}
 
@@ -59,6 +60,27 @@ public class WSC extends GPProblem implements SimpleProblemForm {
 			double fitness = calculateFitness(qos[WSCInitializer.AVAILABILITY], qos[WSCInitializer.RELIABILITY],
 					qos[WSCInitializer.TIME], qos[WSCInitializer.COST], mt, dst, init);
 
+			
+
+			String fitnessStr = fitness + "";
+			String f0 = "0.8331172922854431";
+			if (fitnessStr.startsWith(f0)) {
+				double qosvalue = calculateQoS(qos[WSCInitializer.AVAILABILITY], qos[WSCInitializer.RELIABILITY],
+						qos[WSCInitializer.TIME], qos[WSCInitializer.COST], init);
+				double smvalue = calculateSM( mt, dst, init);
+				
+				
+				state.output.println(fitnessStr + ";"+"QoS"+qosvalue+";SM"+smvalue, 0);
+				for (ServiceEdge semanticQuality : input.semanticEdges) {
+					System.out.println("avgmt:"+semanticQuality.getAvgmt()+";avgdst:"+semanticQuality.getAvgsdt());
+					
+				}
+
+			}
+			
+			
+			
+			
 			// the fitness better be SimpleFitness!
 			SimpleFitness f = ((SimpleFitness) ind.fitness);
 			f.setFitness(state, fitness, false);
@@ -67,6 +89,28 @@ public class WSC extends GPProblem implements SimpleProblemForm {
 		}
 	}
 
+	private double calculateQoS(double a, double r, double t, double c, WSCInitializer init) {
+
+		a = normaliseAvailability(a);
+		r = normaliseReliability(r);
+		t = normaliseTime(t);
+		c = normaliseCost(c);
+
+		double fitness = init.w1 * a + init.w2 * r + init.w3 * t + init.w4 * c;
+
+		return fitness;
+	}
+
+	private double calculateSM(double mt, double dst, WSCInitializer init) {
+
+		mt = normaliseMatchType(mt);
+		dst = normaliseDistanceValue(dst);
+
+		double fitness = init.w5 * mt + init.w6 * dst;
+
+		return fitness;
+	}
+	
 	// private double calculateFitness(double a, double r, double t, double c,
 	// WSCInitializer init) {
 	// a = normaliseAvailability(a, init);
