@@ -104,6 +104,13 @@ public class WSCIndividual extends GPIndividual {
 		return allNodes;
 	}
 
+	// Get FiltedTreeNodes not including startNodes and endNodes
+	public List<GPNode> getAllStartNodes() {
+		List<GPNode> allNodes = new ArrayList<GPNode>();
+		AddStartNodes(trees[0].child, allNodes);
+		return allNodes;
+	}
+
 	public List<GPNode> AddFiltedChildNodes(GPNode gpChild, List<GPNode> allNodes) {
 
 		GPNode current = gpChild;
@@ -147,6 +154,20 @@ public class WSCIndividual extends GPIndividual {
 
 	}
 
+	public List<GPNode> AddStartNodes(GPNode gpChild, List<GPNode> allNodes) {
+
+		GPNode current = gpChild;
+		if (((ServiceGPNode) current).getSerName() == "endNode") {
+			allNodes.add(current);
+		}
+		if (current.children != null) {
+			for (GPNode child : current.children)
+				AddStartNodes(child, allNodes);
+		}
+		return allNodes;
+
+	}
+
 	// Replace the GPNodes and associated semantic edges
 	public void replaceNode4Crossover(GPNode node, GPNode replacement) {
 		// Perform replacement if neither node is not null
@@ -173,10 +194,9 @@ public class WSCIndividual extends GPIndividual {
 		// Perform replacement if neither node is not null
 		if (node != null && replacement != null) {
 			// clone replacement
-			replacement = (GPNode)replacement.clone();
-			
+			replacement = (GPNode) replacement.clone();
 
-//			 GPNode[] replacementList = replacement.children.clone();
+			// GPNode[] replacementList = replacement.children.clone();
 
 			boolean isParentofStartNode = false;
 			for (GPNode child : node.children) {
@@ -226,23 +246,23 @@ public class WSCIndividual extends GPIndividual {
 
 				// replace replacement in the graph
 				GPNode[] childOfReplacement = replacement.children;
-				//point all children's parent to parent
+				// point all children's parent to parent
 
 				for (GPNode childofRep : childOfReplacement) {
 					childofRep.parent = pNode;
 				}
-				
-				//point all parent's children to children
+
+				// point all parent's children to children
 				Iterator<GPNode> childOfNodeIter = Iterables
 						.concat(Arrays.asList(pNode.children), Arrays.asList(childOfReplacement)).iterator();
 
 				List<GPNode> copy = new ArrayList<GPNode>();
 
 				while (childOfNodeIter.hasNext()) {
-					GPNode childOfNode =childOfNodeIter.next();
+					GPNode childOfNode = childOfNodeIter.next();
 					if (childOfNode != node) {
 						copy.add(childOfNode);
-					} 
+					}
 				}
 
 				GPNode[] allChildOfNode = new GPNode[pNode.children.length + childOfReplacement.length - 1];
@@ -250,27 +270,27 @@ public class WSCIndividual extends GPIndividual {
 					allChildOfNode[i] = copy.get(i);
 				}
 
-				 pNode.children =allChildOfNode;
+				pNode.children = allChildOfNode;
 			} else {
 				GPNode pNode = (GPNode) node.parent;
 				GPNode[] childOfReplacement = replacement.children;
-				
-				//point all children's parent to parent
+
+				// point all children's parent to parent
 				for (GPNode childofRep : childOfReplacement) {
 					childofRep.parent = pNode;
 				}
 
-				//point all parent's children to children
+				// point all parent's children to children
 				Iterator<GPNode> childOfNodeIter = Iterables
 						.concat(Arrays.asList(pNode.children), Arrays.asList(childOfReplacement)).iterator();
 
 				List<GPNode> copy = new ArrayList<GPNode>();
 
 				while (childOfNodeIter.hasNext()) {
-					GPNode childOfNode =childOfNodeIter.next();
+					GPNode childOfNode = childOfNodeIter.next();
 					if (childOfNode != node) {
 						copy.add(childOfNode);
-					} 
+					}
 				}
 
 				GPNode[] allChildOfNode = new GPNode[pNode.children.length + childOfReplacement.length - 1];
@@ -278,7 +298,7 @@ public class WSCIndividual extends GPIndividual {
 					allChildOfNode[i] = copy.get(i);
 				}
 
-				 pNode.children =allChildOfNode;
+				pNode.children = allChildOfNode;
 
 			}
 
