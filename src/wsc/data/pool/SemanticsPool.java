@@ -115,13 +115,17 @@ public class SemanticsPool {
 		String a = givenClass.getID();
 		String b = relatedClass.getID();
 		if (WSCInitializer.semanticMatrix.get(a, b) != null) {
+			double s = WSCInitializer.semanticMatrix.get(a, b);
 
 			pConn.setConsidered(true);
 
 			if (a.equals(b)) {
 				pConn.setMatchType(1);
+				pConn.setSimilarity(s);
+
 			} else {
 				pConn.setMatchType(0.75);
+				pConn.setSimilarity(s);
 			}
 			return pConn;
 		}

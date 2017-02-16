@@ -157,7 +157,7 @@ public class WSCIndividual extends GPIndividual {
 	public List<GPNode> AddStartNodes(GPNode gpChild, List<GPNode> allNodes) {
 
 		GPNode current = gpChild;
-		if (((ServiceGPNode) current).getSerName() == "endNode") {
+		if (((ServiceGPNode) current).getSerName() == "startNode") {
 			allNodes.add(current);
 		}
 		if (current.children != null) {
