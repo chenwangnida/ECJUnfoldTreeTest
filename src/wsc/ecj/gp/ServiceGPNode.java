@@ -166,7 +166,7 @@ public class ServiceGPNode extends GPNode implements InOutNode {
 				}
 				//update aggregatedServiceEdge
 				Set<ServiceEdge> childSemanticEdge = childGPNode.getAggregatedServiceEdge();
-				aggregatedServiceEdge.addAll(childSemanticEdge);
+//				aggregatedServiceEdge.addAll(childSemanticEdge);
 			}
 			rd.maxTime = maxTime;
 			maxTime = rd.maxTime;
@@ -240,7 +240,7 @@ public class ServiceGPNode extends GPNode implements InOutNode {
 				}
 				//update aggregatedServiceEdge
 				Set<ServiceEdge> childSemanticEdge = childGPNode.getAggregatedServiceEdge();
-				aggregatedServiceEdge.addAll(childSemanticEdge);
+//				aggregatedServiceEdge.addAll(childSemanticEdge);
 			}
 
 		}

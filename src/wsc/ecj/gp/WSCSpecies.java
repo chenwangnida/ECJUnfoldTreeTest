@@ -300,7 +300,7 @@ public class WSCSpecies extends Species {
 			if (verticeList.get(i).equals("startNode")) {
 				Set<ServiceEdge> outgoingEdgeSet = new HashSet<ServiceEdge>();
 				outgoingEdgeSet.add(edgeList.get(i));
-				ServiceGPNode sgp = new ServiceGPNode(outgoingEdgeSet);
+				ServiceGPNode sgp = new ServiceGPNode();
 				sgp.setSerName("startNode");
 				root = sgp;
 			} else if (verticeList.get(i).equals("endNode")) {
@@ -311,7 +311,7 @@ public class WSCSpecies extends Species {
 			} else {
 				Set<ServiceEdge> outgoingEdgeSet = new HashSet<ServiceEdge>();
 				outgoingEdgeSet.add(edgeList.get(i));
-				ServiceGPNode sgp = new ServiceGPNode(outgoingEdgeSet);
+				ServiceGPNode sgp = new ServiceGPNode();
 				sgp.setSerName(verticeList.get(i));
 				root = createParentNode(root, sgp);
 			}
