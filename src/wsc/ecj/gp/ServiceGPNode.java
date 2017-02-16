@@ -168,6 +168,8 @@ public class ServiceGPNode extends GPNode implements InOutNode {
 				Set<ServiceEdge> childSemanticEdge = childGPNode.getAggregatedServiceEdge();
 				aggregatedServiceEdge.addAll(childSemanticEdge);
 			}
+			rd.maxTime = maxTime;
+			maxTime = rd.maxTime;
 
 		} else if (serName.equals("startNode")) {
 			rd.serName = serName;

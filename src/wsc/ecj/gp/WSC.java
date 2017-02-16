@@ -76,21 +76,29 @@ public class WSC extends GPProblem implements SimpleProblemForm {
 			double fitness = calculateFitness(qos[WSCInitializer.AVAILABILITY], qos[WSCInitializer.RELIABILITY],
 					qos[WSCInitializer.TIME], qos[WSCInitializer.COST], mt, dst, init);
 
-//			String fitnessStr = fitness + "";
-//			String f0 = "0.8331172922854431";
-//			if (fitnessStr.startsWith(f0)) {
-//				double qosvalue = calculateQoS(qos[WSCInitializer.AVAILABILITY], qos[WSCInitializer.RELIABILITY],
-//						qos[WSCInitializer.TIME], qos[WSCInitializer.COST], init);
-//				double smvalue = calculateSM(mt, dst, init);
-//
-//				state.output.println(fitnessStr + ";" + "QoS" + qosvalue + ";SM" + smvalue, 0);
-//				for (ServiceEdge semanticQuality : input.semanticEdges) {
-//					System.out
-//							.println("avgmt:" + semanticQuality.getAvgmt() + ";avgdst:" + semanticQuality.getAvgsdt());
-//
-//				}
-//
-//			}
+			String fitnessStr = fitness + "";
+			String f0 = "0.8331172922854431";
+			if (fitnessStr.startsWith(f0)) {
+				double qosvalue = calculateQoS(qos[WSCInitializer.AVAILABILITY], qos[WSCInitializer.RELIABILITY],
+						qos[WSCInitializer.TIME], qos[WSCInitializer.COST], init);
+				double smvalue = calculateSM(mt, dst, init);
+
+				state.output.println(fitnessStr + ";" + "QoS" + qosvalue + ";SM" + smvalue, 0);
+				
+				for (Service s : input.seenServices) {
+					qos[WSCInitializer.COST] += s.qos[WSCInitializer.COST];
+					qos[WSCInitializer.AVAILABILITY] *= s.qos[WSCInitializer.AVAILABILITY];
+					qos[WSCInitializer.RELIABILITY] *= s.qos[WSCInitializer.RELIABILITY];
+				}
+				
+				input.seenServices.forEach(ser->System.out.print(ser.getServiceID()+";"));
+				for (ServiceEdge semanticQuality : semanticEdges) {
+					System.out.println( semanticQuality.getSourceService()
+							+ "->"+semanticQuality.getTargetService() + ";avgmt:" + semanticQuality.getAvgmt() + ";avgdst:"
+							+ semanticQuality.getAvgsdt());
+				}
+
+			}
 
 			// the fitness better be SimpleFitness!
 			SimpleFitness f = ((SimpleFitness) ind.fitness);
@@ -243,6 +251,7 @@ public class WSC extends GPProblem implements SimpleProblemForm {
 	}
 
 	private double calculateQoS(double a, double r, double t, double c, WSCInitializer init) {
+		System.out.println("Before :a:" + a + "r:" + r + "t:" + t + "c:" + c);
 
 		a = normaliseAvailability(a);
 		r = normaliseReliability(r);
@@ -250,6 +259,7 @@ public class WSC extends GPProblem implements SimpleProblemForm {
 		c = normaliseCost(c);
 
 		double fitness = init.w1 * a + init.w2 * r + init.w3 * t + init.w4 * c;
+		System.out.println("a:" + a + "r:" + r + "t:" + t + "c:" + c);
 
 		return fitness;
 	}
