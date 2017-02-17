@@ -164,9 +164,9 @@ public class WSCCrossoverPipeline extends BreedingPipeline {
 		//
 		// System.out.println("NULLLLLLLLLLLLLLLLL");
 		// }
-		isInputFound = searchReplacement4Inputs(init.initialWSCPool.getSemanticsPool(), ioNode.getInputs(),
+		isInputFound = searchReplacement4Inputs(WSCInitializer.initialWSCPool.getSemanticsPool(), ioNode.getInputs(),
 				ioReplacement.getInputs());
-		isOutputFound = searchReplacement4Outputs(init.initialWSCPool.getSemanticsPool(), ioNode.getOutputs(),
+		isOutputFound = searchReplacement4Outputs(WSCInitializer.initialWSCPool.getSemanticsPool(), ioNode.getOutputs(),
 				ioReplacement.getOutputs());
 
 		return isInputFound && isOutputFound;

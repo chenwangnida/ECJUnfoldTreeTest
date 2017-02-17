@@ -3,7 +3,6 @@ package wsc.ecj.gp;
 import ec.util.*;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -57,16 +56,28 @@ public class WSC extends GPProblem implements SimpleProblemForm {
 
 			double mt = 1.0;
 			double dst = 0.0; // Exact Match dst = 1 ;
-			for (ServiceEdge semanticQuality : semanticEdges) {
+
+			Set<SemanticLink> semanticLinks = new HashSet<SemanticLink>();
+
+			for (ServiceEdge edge : semanticEdges) {
+				SemanticLink sl = new SemanticLink();
+
+				sl.setSourceService(edge.getSourceService());
+				sl.setTargetService(edge.getTargetService());
+				sl.setAvgmt(edge.getAvgmt());
+				sl.setAvgsdt(edge.getAvgsdt());
+				semanticLinks.add(sl);
+			}
+
+			for (SemanticLink semanticQuality : semanticLinks) {
 				mt *= semanticQuality.getAvgmt();
 				dst += semanticQuality.getAvgsdt();
 
 			}
 
-			dst = dst / (semanticEdges.size());
-			// System.out.println("semantic edge Size :"+
-			// input.semanticEdges.size());
-
+			dst = dst / (semanticLinks.size());
+	
+	
 			for (Service s : input.seenServices) {
 				qos[WSCInitializer.COST] += s.qos[WSCInitializer.COST];
 				qos[WSCInitializer.AVAILABILITY] *= s.qos[WSCInitializer.AVAILABILITY];
@@ -76,29 +87,34 @@ public class WSC extends GPProblem implements SimpleProblemForm {
 			double fitness = calculateFitness(qos[WSCInitializer.AVAILABILITY], qos[WSCInitializer.RELIABILITY],
 					qos[WSCInitializer.TIME], qos[WSCInitializer.COST], mt, dst, init);
 
-//			String fitnessStr = fitness + "";
-//			String f0 = "0.8331172922854431";
-//			if (fitnessStr.startsWith(f0)) {
-//				double qosvalue = calculateQoS(qos[WSCInitializer.AVAILABILITY], qos[WSCInitializer.RELIABILITY],
-//						qos[WSCInitializer.TIME], qos[WSCInitializer.COST], init);
-//				double smvalue = calculateSM(mt, dst, init);
-//
-//				state.output.println(fitnessStr + ";" + "QoS" + qosvalue + ";SM" + smvalue, 0);
-//				
-//				for (Service s : input.seenServices) {
-//					qos[WSCInitializer.COST] += s.qos[WSCInitializer.COST];
-//					qos[WSCInitializer.AVAILABILITY] *= s.qos[WSCInitializer.AVAILABILITY];
-//					qos[WSCInitializer.RELIABILITY] *= s.qos[WSCInitializer.RELIABILITY];
-//				}
-//				
-//				input.seenServices.forEach(ser->System.out.print(ser.getServiceID()+";"));
-//				for (ServiceEdge semanticQuality : semanticEdges) {
-//					System.out.println( semanticQuality.getSourceService()
-//							+ "->"+semanticQuality.getTargetService() + ";avgmt:" + semanticQuality.getAvgmt() + ";avgdst:"
-//							+ semanticQuality.getAvgsdt());
-//				}
-//
-//			}
+			// String fitnessStr = fitness + "";
+			// String f0 = "0.8331172922854431";
+			// if (fitnessStr.startsWith(f0)) {
+			// double qosvalue = calculateQoS(qos[WSCInitializer.AVAILABILITY],
+			// qos[WSCInitializer.RELIABILITY],
+			// qos[WSCInitializer.TIME], qos[WSCInitializer.COST], init);
+			// double smvalue = calculateSM(mt, dst, init);
+			//
+			// state.output.println(fitnessStr + ";" + "QoS" + qosvalue + ";SM"
+			// + smvalue, 0);
+			//
+			// for (Service s : input.seenServices) {
+			// qos[WSCInitializer.COST] += s.qos[WSCInitializer.COST];
+			// qos[WSCInitializer.AVAILABILITY] *=
+			// s.qos[WSCInitializer.AVAILABILITY];
+			// qos[WSCInitializer.RELIABILITY] *=
+			// s.qos[WSCInitializer.RELIABILITY];
+			// }
+			//
+			// input.seenServices.forEach(ser->System.out.print(ser.getServiceID()+";"));
+			// for (ServiceEdge semanticQuality : semanticEdges) {
+			// System.out.println( semanticQuality.getSourceService()
+			// + "->"+semanticQuality.getTargetService() + ";avgmt:" +
+			// semanticQuality.getAvgmt() + ";avgdst:"
+			// + semanticQuality.getAvgsdt());
+			// }
+			//
+			// }
 
 			// the fitness better be SimpleFitness!
 			SimpleFitness f = ((SimpleFitness) ind.fitness);

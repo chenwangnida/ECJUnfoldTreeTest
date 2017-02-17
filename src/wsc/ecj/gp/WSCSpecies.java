@@ -75,7 +75,7 @@ public class WSCSpecies extends Species {
 
 		ServiceGraph graph = new ServiceGraph(ServiceEdge.class);
 
-		init.initialWSCPool.createGraphService(WSCInitializer.taskInput, WSCInitializer.taskOutput, graph);
+		WSCInitializer.initialWSCPool.createGraphService(WSCInitializer.taskInput, WSCInitializer.taskOutput, graph);
 
 		while (true) {
 			List<String> dangleVerticeList = dangleVerticeList(graph);
@@ -92,7 +92,7 @@ public class WSCSpecies extends Species {
 
 		ServiceGraph graph = new ServiceGraph(ServiceEdge.class);
 
-		init.initialWSCPool.createGraphService4Mutation(combinedInputs, combinedOuputs, graph);
+		WSCInitializer.initialWSCPool.createGraphService4Mutation(combinedInputs, combinedOuputs, graph);
 		// init.initialWSCPool.createGraphService(WSCInitializer.taskInput,
 		// WSCInitializer.taskOutput, graph);
 
