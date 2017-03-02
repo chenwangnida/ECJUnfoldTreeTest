@@ -93,7 +93,7 @@ public class WSCCrossoverPipeline extends BreedingPipeline {
 			Collections.shuffle(allT2Nodes, WSCInitializer.random);
 
 			// For each t1 node, see if it can be replaced by a t2 node
-			GPNode[] nodes = findReplacement(init, allT1Nodes, allT2Nodes);
+			GPNode[] nodes = findReplacement4ExactMatch(init, allT1Nodes, allT2Nodes);
 			GPNode nodeT1 = nodes[0];
 			GPNode replacementT2 = nodes[1];
 //			state.output.println(" -----------replace part from A:"+nodeT1, 0);
@@ -128,8 +128,8 @@ public class WSCCrossoverPipeline extends BreedingPipeline {
 		return n1;
 
 	}
-
-	public GPNode[] findReplacement(WSCInitializer init, List<GPNode> nodes, List<GPNode> replacements) {
+	
+	public GPNode[] findReplacement4ExactMatch(WSCInitializer init, List<GPNode> nodes, List<GPNode> replacements) {
 		GPNode[] result = new GPNode[2];
 		outterLoop: for (GPNode node : nodes) {
 			for (GPNode replacement : replacements) {
@@ -141,9 +141,11 @@ public class WSCCrossoverPipeline extends BreedingPipeline {
 				 */
 				InOutNode ioNode = (InOutNode) node;
 				InOutNode ioReplacement = (InOutNode) replacement;
-				if (IsReplacementFound(init, ioNode, ioReplacement)) {
-//					System.out.println("selected Node ******" + ioNode.toString());
-//					System.out.println("replaced Node ******" + ioReplacement.toString());
+				if (IsReplacementFound4ExactMatch(init, ioNode, ioReplacement)) {
+					// System.out.println("selected Node ******" +
+					// ioNode.toString());
+					// System.out.println("replaced Node ******" +
+					// ioReplacement.toString());
 					result[0] = node;
 					result[1] = replacement;
 					break outterLoop;
@@ -152,11 +154,11 @@ public class WSCCrossoverPipeline extends BreedingPipeline {
 		}
 		return result;
 	}
-
+	
 	// check both the inputs and outputs from node and replacement node are
 	// matched.
 
-	private boolean IsReplacementFound(WSCInitializer init, InOutNode ioNode, InOutNode ioReplacement) {
+	private boolean IsReplacementFound4ExactMatch(WSCInitializer init, InOutNode ioNode, InOutNode ioReplacement) {
 		boolean isInputFound = false;
 		boolean isOutputFound = false;
 		// if (ioNode.getInputs() == null) {
@@ -164,15 +166,117 @@ public class WSCCrossoverPipeline extends BreedingPipeline {
 		//
 		// System.out.println("NULLLLLLLLLLLLLLLLL");
 		// }
-		isInputFound = searchReplacement4Inputs(WSCInitializer.initialWSCPool.getSemanticsPool(), ioNode.getInputs(),
-				ioReplacement.getInputs());
-		isOutputFound = searchReplacement4Outputs(WSCInitializer.initialWSCPool.getSemanticsPool(), ioNode.getOutputs(),
-				ioReplacement.getOutputs());
+		isInputFound = searchReplacement4Inputs4ExactMatch(WSCInitializer.initialWSCPool.getSemanticsPool(),
+				ioNode.getInputs(), ioReplacement.getInputs());
+		isOutputFound = searchReplacement4Outputs4ExactMatch(WSCInitializer.initialWSCPool.getSemanticsPool(),
+				ioNode.getOutputs(), ioReplacement.getOutputs());
 
 		return isInputFound && isOutputFound;
 
 	}
 
+
+
+	public boolean searchReplacement4Inputs4ExactMatch(SemanticsPool semanticsPool, List<ServiceInput> ioNodeInputs,
+			List<ServiceInput> ioReplacement) {
+
+		for (ServiceInput serInput : ioNodeInputs) {
+			serInput.setSatified(false);
+		}
+		for (ServiceInput serInput : ioReplacement) {
+			serInput.setSatified(false);
+		}
+
+		if (ioNodeInputs.size() == ioReplacement.size()) {
+			int relevantServiceCount = 0;
+			for (int i = 0; i < ioReplacement.size(); i++) {
+				String giveninput = ioReplacement.get(i).getInput();
+				for (int j = 0; j < ioNodeInputs.size(); j++) {
+					ServiceInput serInput = ioNodeInputs.get(j);
+					if (!serInput.isSatified()) {
+						String existInput = ioNodeInputs.get(j).getInput();
+						ParamterConn pConn = semanticsPool.searchSemanticMatchFromInst4ExactMatch(giveninput,
+								existInput);
+						boolean foundmatched = pConn.isConsidered();
+						if (foundmatched) {
+							serInput.setSatified(true);
+							break;// each inst can only be used for one time
+						}
+
+					}
+
+				}
+
+			}
+
+			for (ServiceInput sInput : ioNodeInputs) {
+				boolean sf = sInput.isSatified();
+				if (sf == true) {
+					relevantServiceCount++;
+				}
+			}
+
+			if (relevantServiceCount == ioNodeInputs.size()) {
+				return true;
+			}
+
+		}
+
+		return false;
+	}
+	public boolean searchReplacement4Outputs4ExactMatch(SemanticsPool semanticsPool, List<ServiceOutput> ioNodeOutputs,
+			List<ServiceOutput> ioReplacement) {
+		for (ServiceOutput serInput : ioNodeOutputs) {
+			serInput.setSatified(false);
+		}
+		for (ServiceOutput serInput : ioReplacement) {
+			serInput.setSatified(false);
+		}
+
+		if (ioNodeOutputs.size() == ioReplacement.size()) {
+			int relevantServiceCount = 0;
+			for (int i = 0; i < ioReplacement.size(); i++) {
+				String givenOutput = ioReplacement.get(i).getOutput();
+				for (int j = 0; j < ioNodeOutputs.size(); j++) {
+					ServiceOutput serOutput = ioNodeOutputs.get(j);
+					if (!serOutput.isSatified()) {
+						String existOutput = ioNodeOutputs.get(j).getOutput();
+						ParamterConn pConn = semanticsPool.searchSemanticMatchFromInst4ExactMatch(givenOutput,
+								existOutput);
+						boolean foundmatched = pConn.isConsidered();
+						if (foundmatched) {
+							serOutput.setSatified(true);
+							break;// each inst can only be used for one time
+						}
+
+					}
+
+				}
+
+			}
+
+			for (ServiceOutput sInput : ioNodeOutputs) {
+				boolean sf = sInput.isSatified();
+				if (sf == true) {
+					relevantServiceCount++;
+				}
+			}
+
+			if (relevantServiceCount == ioNodeOutputs.size()) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * search input functional correctness for replacements
 	 *
