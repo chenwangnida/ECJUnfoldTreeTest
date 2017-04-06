@@ -23,6 +23,7 @@ import ec.gp.GPNode;
 import ec.util.Parameter;
 import wsc.graph.ServiceGraph;
 import wsc.tool.MapUtil;
+import wsc.graph.GraphUtils;
 import wsc.graph.ServiceEdge;
 
 public class WSCSpecies extends Species {
@@ -105,9 +106,50 @@ public class WSCSpecies extends Species {
 		}
 
 		graph.removeEdge("startNode", "endNode");
+		optimiseGraph(graph);
 
 		return graph;
 	}
+	
+	
+	private void optimiseGraph(ServiceGraph graph) {
+		for (String vertice : graph.vertexSet()) {
+			if (graph.outDegreeOf(vertice) > 1) {
+				List<ServiceEdge> outgoingEdges = new ArrayList<ServiceEdge>();
+
+				outgoingEdges.addAll(graph.outgoingEdgesOf(vertice));
+ 
+				for(ServiceEdge outgoingedge:outgoingEdges){
+					if (graph.getEdgeTarget(outgoingedge).equals("endNode")) {
+						// Remove the output node from the children list
+						outgoingEdges.remove(outgoingedge);
+						break;
+					}
+
+				}
+
+				if (outgoingEdges.size() > 1) {
+					// save the direct successors
+					Set<String> directSuccesors = new HashSet<String>();
+					Set<String> allTargets = new HashSet<String>();
+
+					outgoingEdges.forEach(outgoingedge -> directSuccesors.add(graph.getEdgeTarget(outgoingedge)));
+
+					for (String succesor : directSuccesors) {
+						Set<String> targets = GraphUtils.getOutgoingVertices(graph, succesor);
+						allTargets.addAll(targets);
+					}
+
+					for (String succesor : directSuccesors) {
+						if (allTargets.contains(succesor)) {
+							graph.removeEdge(vertice, succesor);
+						}
+					}
+				}
+			}
+		}
+	}
+
 
 	/**
 	 * Find all the path of serviceGraph using Dijkstra-like algorithm, sort
